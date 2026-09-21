@@ -1,0 +1,52 @@
+name: Require PR Reviews
+
+on:
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  require-reviews:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR has reviews
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            if (!pr) {
+              core.setFailed('No PR context available');
+              return;
+            }
+
+            const owner = pr.user.login;
+            const repo = context.repo.repo;
+            const prNumber = pr.number;
+
+            // Get repo owner(s) - this would need to be configured
+            const requiredReviewers = ['JuanPabloTdea']; // TODO: Replace with actual owner username
+
+            if (owner === requiredReviewers[0]) {
+              console.log('PR author is owner, skipping review requirement');
+              return;
+            }
+
+            // Check if PR is from a fork (outside collaborators)
+            const isFork = pr.head.repo.fork;
+
+            if (isFork || !requiredReviewers.includes(owner)) {
+              // External collaborator or not owner - require reviews
+              const reviews = await github.rest.pulls.listReviews({
+                owner,
+                repo,
+                pull_number: prNumber
+              });
+
+              if (reviews.data.length === 0) {
+                core.setFailed('This PR requires at least one review before merging. Please request a review from a maintainer.');
+              }
+
+              const approvedReviews = reviews.data.filter(r => r.state === 'APPROVED');
+              if (approvedReviews.length === 0) {
+                core.setFailed('This PR needs at least one approval before merging.');
+              }
+            }
