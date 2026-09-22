@@ -20,11 +20,20 @@ describe('Font Family Validation', () => {
 })
 
 describe('Validate button classes', () => {
- it('TC6 - Validate button classes', () => {
+  it('TC6 - Validate button classes', () => {
     cy.visit('https://ultimateqa.com/automation/fake-pricing-page/#top')
     cy.scrollTo('bottom')
 
     cy.get('.et_pb_button.et_pb_pricing_table_button').should('have.class', 'et_pb_button')
     cy.get('.et_pb_button.et_pb_pricing_table_button').should('have.class', 'et_pb_pricing_table_button')
+  })
+})
+
+describe('Page Title and URL Validation', () => {
+  it('TC7 - Validate page title and URL', () => {
+    cy.visit('https://ultimateqa.com/automation/fake-pricing-page/#top')
+
+    cy.title().should('eq', 'Fake pricing page - Ultimate QA')
+    cy.url().should('eq', 'https://ultimateqa.com/automation/fake-pricing-page/#top')
   })
 })

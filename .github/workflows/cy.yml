@@ -12,6 +12,6 @@ jobs:
         with:
           node-version: 20
       - name: Install dependencies
-        run: npm cy
+        run: npm install
       - name: Run tests
         run: npx cypress run
