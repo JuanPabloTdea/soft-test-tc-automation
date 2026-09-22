@@ -7,7 +7,7 @@ settings:
 importers:
 
   .:
-    dependencies:
+    devDependencies:
       cypress:
         specifier: ^16.1.0
         version: 16.1.0
